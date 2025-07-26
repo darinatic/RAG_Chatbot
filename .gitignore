@@ -1,0 +1,21 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# MLflow
+mlruns/
+
+# FAISS indices
+*.bin
+*_chunks.pkl
+
+# Data files
+data/*.pdf
+
+venv/
