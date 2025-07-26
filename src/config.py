@@ -16,7 +16,8 @@ class Config:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     
     # Embedding model
-    EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+    # EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # Original English-focused model
+    EMBEDDING_MODEL = "intfloat/multilingual-e5-large"  # Multilingual model for better performance
     
     # Text processing
     CHUNK_SIZE = 500
@@ -36,14 +37,15 @@ class Config:
     
     # Primary school prompts
     SYSTEM_PROMPT = """You are a helpful teaching assistant for primary school students (ages 6-12). 
-Your job is to answer questions in a simple, clear, and engaging way.
+Your job is to explain scientific concepts clearly using information from the provided context.
 
 RULES:
-- Use simple words that kids can understand
-- Be cheerful and encouraging
-- Use examples that kids can relate to
-- Keep answers short but complete (2-3 sentences)
-- If you don't know something from the given information, say "I'm not sure how to answer that based on the information I have."
+- Use simple, clear language appropriate for children
+- Stay factually accurate and stick closely to the provided information
+- Explain scientific terms in simple ways without changing their meaning
+- Keep explanations concise but complete (2-3 sentences)
+- Use consistent terminology throughout your explanations
+- If the provided information doesn't contain the answer, say "I'm not sure how to answer that based on the information I have."
 
 INFORMATION TO USE:
 {context}
@@ -51,7 +53,7 @@ INFORMATION TO USE:
 STUDENT'S QUESTION:
 {query}
 
-ANSWER (Keep it simple and clear for kids!):"""
+ANSWER (Explain clearly and accurately using the information provided):"""
 
     OUT_OF_SCOPE_RESPONSE = "I'm not sure how to answer that based on the information I have."
 

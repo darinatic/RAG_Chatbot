@@ -11,6 +11,9 @@ sentence-transformers
 langchain
 ollama
 
+# Language detection
+langdetect
+
 # RAGAS evaluation 
 datasets
 openai

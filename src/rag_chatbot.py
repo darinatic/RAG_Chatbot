@@ -1,14 +1,18 @@
 """
-Main RAG Chatbot implementation
+Main RAG Chatbot implementation with language detection
 """
 import ollama
 import requests
+from langdetect import detect, DetectorFactory
 from typing import Dict, Any, List, Optional
 from .config import Config
 from .vector_store import VectorStore
 
+# Set seed for consistent language detection
+DetectorFactory.seed = 0
+
 class RAGChatbot:
-    """Main RAG chatbot with local LLM"""
+    """Main RAG chatbot with local LLM and language detection"""
     
     def __init__(self, vector_store: VectorStore, config: Config = Config()):
         self.vector_store = vector_store
@@ -38,6 +42,26 @@ class RAGChatbot:
             print(f"Ollama connection error: {str(e)}")
             return False
     
+    def _detect_language(self, text: str) -> str:
+        """Detect the language of input text"""
+        try:
+            lang_code = detect(text)
+            
+            # Map language codes to readable names
+            lang_mapping = {
+                'en': 'English',
+                'zh': 'Chinese',  # Covers both simplified and traditional
+                'zh-cn': 'Chinese',
+                'zh-tw': 'Chinese',
+                'ms': 'Malay',
+                'id': 'Malay',  # Indonesian is similar to Malay
+            }
+            
+            return lang_mapping.get(lang_code, 'English')
+        except:
+            # Default to English if detection fails
+            return 'English'
+    
     def _query_llm(self, prompt: str) -> str:
         """Query local Ollama model"""
         try:
@@ -60,41 +84,59 @@ class RAGChatbot:
         best_similarity = max([chunk.get('similarity', 0) for chunk in retrieved_chunks])
         return best_similarity > self.config.SIMILARITY_THRESHOLD
     
-    def _create_prompt(self, query: str, context_chunks: List[Dict]) -> str:
-        """Create prompt with context for LLM"""
+    def _create_prompt(self, query: str, context_chunks: List[Dict], detected_language: str) -> str:
+        """Create prompt with context and language instruction for LLM"""
         context = "\n".join([chunk['content'] for chunk in context_chunks])
         
-        return self.config.SYSTEM_PROMPT.format(
+        # Create language-aware system prompt
+        language_instruction = f"\nIMPORTANT: The student asked the question in {detected_language}. You must respond in {detected_language}."
+        
+        system_prompt_with_language = self.config.SYSTEM_PROMPT + language_instruction
+        
+        return system_prompt_with_language.format(
             context=context,
             query=query
         )
     
     def answer(self, query: str) -> Dict[str, Any]:
-        """Main method to answer user queries"""
-        # Step 1: Retrieve relevant chunks
+        """Main method to answer user queries with language detection"""
+        # Step 1: Detect language of the query
+        detected_language = self._detect_language(query)
+        
+        # Step 2: Retrieve relevant chunks
         retrieved_chunks = self.vector_store.search(query)
         
-        # Step 2: Check if query is in scope
+        # Step 3: Check if query is in scope
         if not self._is_in_scope(retrieved_chunks):
+            # Create language-specific out-of-scope response
+            if detected_language == 'Chinese':
+                out_of_scope_response = "我不确定如何根据我拥有的信息回答这个问题。"
+            elif detected_language == 'Malay':
+                out_of_scope_response = "Saya tidak pasti bagaimana untuk menjawab soalan itu berdasarkan maklumat yang saya ada."
+            else:
+                out_of_scope_response = self.config.OUT_OF_SCOPE_RESPONSE
+            
             return {
                 'query': query,
-                'answer': self.config.OUT_OF_SCOPE_RESPONSE,
+                'answer': out_of_scope_response,
+                'detected_language': detected_language,
                 'in_scope': False,
                 'confidence': 0.0,
                 'chunks_used': 0
             }
         
-        # Step 3: Generate answer using RAG
-        prompt = self._create_prompt(query, retrieved_chunks)
+        # Step 4: Generate answer using RAG with language awareness
+        prompt = self._create_prompt(query, retrieved_chunks, detected_language)
         answer = self._query_llm(prompt)
         
-        # Step 4: Calculate confidence
+        # Step 5: Calculate confidence
         avg_similarity = sum([chunk.get('similarity', 0) for chunk in retrieved_chunks]) / len(retrieved_chunks)
         
         # Store conversation
         result = {
             'query': query,
             'answer': answer,
+            'detected_language': detected_language,
             'in_scope': True,
             'confidence': float(avg_similarity),
             'chunks_used': len(retrieved_chunks)

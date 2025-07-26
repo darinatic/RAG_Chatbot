@@ -186,23 +186,23 @@ class RAGASEvaluator:
         """Create sample test cases for cells and chemistry of life"""
         return [
             {
-                'question': 'What is a cell?',
-                'ground_truth': 'A cell is like a tiny building block that makes up all living things. It helps your body grow, stay alive, and do everything it needs to!'
+                "question": "What Are Cells?",
+                "ground_truth": "Cells are the building blocks of life. They are tiny structures that carry out all the activities needed to keep living things alive, like taking in materials, making useful molecules, and giving energy. You can think of cells like little factories inside your body."
             },
             {
-                'question': 'What is the main function of mitochondria in a cell?',
-                'ground_truth': 'Mitochondria are like power plants in the cell. They give the cell energy to do its job, like helping you move and grow!'
+                "question": "What Are Enzymes?",
+                "ground_truth": "Enzymes are special molecules that help break down or join other molecules together during chemical reactions in the body. For example, an enzyme called maltase breaks down maltose into smaller sugar units like glucose. Enzymes make these reactions happen faster and more easily."
             },
             {
-                'question': 'How does the structure of a red blood cell help it transport oxygen?',
-                'ground_truth': 'Red blood cells are round and squishy, which helps them move through small blood tubes. They carry oxygen all around your body like tiny delivery trucks!'
+                "question": "What Is Osmosis?",
+                "ground_truth": "Osmosis is the movement of water from a place with more water to a place with less water, through a special wall that only lets some things through. This helps cells take in water or release it, depending on their surroundings."
             },
             {
-                'question': 'What is diffusion?',
-                'ground_truth': 'Diffusion is when tiny particles move from a crowded space to a less crowded one. It’s like how the smell of popcorn spreads across a room!'
+                "question": "What Are Complex Carbohydrates?",
+                "ground_truth": "Complex carbohydrates are large molecules made from many sugar units joined together. Examples include starch, cellulose, and glycogen, which have different structures and roles, like storing energy or building cell walls in plants."
             },
             {
-                'question': 'How is the rough endoplasmic reticulum (RER) involved in protein transport?',
-                'ground_truth': 'The rough endoplasmic reticulum helps make and move proteins in the cell. It has tiny parts called ribosomes that work like little chefs cooking up proteins!'
+                "question": "What Are Proteins?",
+                "ground_truth": "Proteins are important molecules made by the cell to help build body parts and do special jobs. Cells use tiny machines called ribosomes to make proteins, which help with growth, repair, and many body functions."
             }
         ]
