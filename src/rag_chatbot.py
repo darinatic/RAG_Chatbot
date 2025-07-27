@@ -19,6 +19,9 @@ class RAGChatbot:
         self.config = config
         self.conversation_history = []
         
+        # Configure Ollama client with custom base URL
+        self.ollama_client = ollama.Client(host=self.config.OLLAMA_BASE_URL)
+        
         # Test Ollama connection
         if not self._test_ollama():
             raise ConnectionError("Cannot connect to Ollama. Make sure it's running.")
@@ -65,7 +68,8 @@ class RAGChatbot:
     def _query_llm(self, prompt: str) -> str:
         """Query local Ollama model"""
         try:
-            response = ollama.chat(
+            print(f"DEBUG: Attempting to connect to Ollama at: {self.config.OLLAMA_BASE_URL}")
+            response = self.ollama_client.chat(
                 model=self.config.OLLAMA_MODEL,
                 messages=[{'role': 'user', 'content': prompt}],
                 options={'temperature': 0.7}

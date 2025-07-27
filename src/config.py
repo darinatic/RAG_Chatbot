@@ -10,7 +10,8 @@ load_dotenv()
 class Config:
     # Ollama settings
     OLLAMA_MODEL = "gemma3:4b"
-    OLLAMA_BASE_URL = "http://localhost:11434"
+    #OLLAMA_BASE_URL = "http://localhost:11434"
+    OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     
     # OpenAI API Key 
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

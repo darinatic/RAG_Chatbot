@@ -44,7 +44,7 @@ class VectorStore:
     def search(self, query: str, top_k: int = None) -> List[Dict[str, Any]]:
         """Search for similar chunks"""
         if self.index is None:
-            print("❌ No index available!")
+            print("No index available!")
             return []
         
         if top_k is None:
