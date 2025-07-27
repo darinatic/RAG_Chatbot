@@ -24,8 +24,8 @@ class Config:
     CHUNK_OVERLAP = 50
     
     # Retrieval settings
-    TOP_K_DOCS = 5
-    SIMILARITY_THRESHOLD = 0.5
+    TOP_K_DOCS = 3
+    SIMILARITY_THRESHOLD = 0.7
     
     # File paths
     DATA_DIR = "data"
