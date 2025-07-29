@@ -13,6 +13,7 @@ ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 # Install system dependencies (minimal)
 RUN apt-get update && apt-get install -y \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -25,9 +26,9 @@ RUN pip install --no-cache-dir -r app_requirements.txt
 COPY src/ src/
 COPY app.py .
 
-# Copy pre-built FAISS index files
-COPY faiss_index.bin .
-COPY faiss_index_chunks.pkl .
+# Copy pre-built FAISS index files from new location
+COPY indices/faiss_index.bin ./faiss_index.bin
+COPY indices/faiss_index_chunks.pkl ./faiss_index_chunks.pkl
 
 # Create a non-root user for security
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app

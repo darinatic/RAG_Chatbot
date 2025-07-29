@@ -2,23 +2,19 @@
 Configuration settings for RAG Chatbot
 """
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# load_dotenv()
 
 class Config:
     # Ollama settings
-    OLLAMA_MODEL = "gemma3:4b"
+    OLLAMA_MODEL = "gemma3:4b-it-qat"  # Updated to use QAT model
     #OLLAMA_BASE_URL = "http://localhost:11434"
     OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     
-    # OpenAI API Key 
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    
-    # Embedding model
-    # EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # Original English-focused model
-    EMBEDDING_MODEL = "intfloat/multilingual-e5-large"  # Multilingual model for better performance
+    # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+    EMBEDDING_MODEL = "intfloat/multilingual-e5-large"  
     
     # Text processing
     CHUNK_SIZE = 500
@@ -28,10 +24,9 @@ class Config:
     TOP_K_DOCS = 3
     SIMILARITY_THRESHOLD = 0.7
     
-    # File paths
     DATA_DIR = "data"
     PDF_FILE = "Cells and Chemistry of Life.pdf"
-    INDEX_FILE = "faiss_index.bin"
+    INDEX_FILE = "faiss_index.bin"  
     
     # RAGAS evaluation
     TARGET_RAGAS_SCORE = 0.8
@@ -58,11 +53,12 @@ ANSWER (Explain clearly and accurately using the information provided):"""
 
     OUT_OF_SCOPE_RESPONSE = "I'm not sure how to answer that based on the information I have."
 
-    @classmethod
-    def validate_api_key(cls):
-        """Validate that OpenAI API key is available"""
-        if not cls.OPENAI_API_KEY:
-            print("WARNING: OPENAI_API_KEY not found in environment variables")
-            print("RAGAS evaluation will not work without this key")
-            return False
-        return True
+    # Commented out - only needed for RAGAS evaluation during development
+    # @classmethod
+    # def validate_api_key(cls):
+    #     """Validate that OpenAI API key is available"""
+    #     if not cls.OPENAI_API_KEY:
+    #         print("WARNING: OPENAI_API_KEY not found in environment variables")
+    #         print("RAGAS evaluation will not work without this key")
+    #         return False
+    #     return True

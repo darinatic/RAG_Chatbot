@@ -5,8 +5,6 @@ Clean interface for primary school students
 
 import streamlit as st
 import sys
-#import os
-#from pathlib import Path
 
 # Add src to path
 sys.path.append('src')
@@ -125,7 +123,7 @@ def main():
             st.session_state.messages = []
             # Re-add welcome message
             welcome_msg = {
-                'answer': "Hi there! I'm your Science Helper Bot! I can answer questions about cells and chemistry. Try asking me something like 'What is a cell?' or 'What do mitochondria do?'",
+                'answer': "Hi there! I'm your Science Helper Bot! I can answer questions about cells and chemistry.'",
                 'confidence': 1.0,
                 'chunks_used': 0
             }

@@ -1,0 +1,31 @@
+# Custom Ollama image with gemma3:4b-it-qat pre-installed
+FROM ollama/ollama:latest
+
+# Install curl for health checks and clean up in single layer
+RUN apt-get update && apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Set environment variables
+ENV OLLAMA_HOST=0.0.0.0
+ENV OLLAMA_ORIGINS=*
+ENV OLLAMA_MODEL=gemma3:4b-it-qat
+
+# Pre-install model during build time for faster startup
+RUN ollama serve & \
+    sleep 10 && \
+    ollama pull gemma3:4b-it-qat && \
+    pkill ollama
+
+# Copy the entrypoint script
+COPY docker/entrypoint-ollama.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Expose Ollama port
+EXPOSE 11434
+
+# Health check to ensure both Ollama and model are ready
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:11434/api/tags | grep -q "gemma3:4b-it-qat" || exit 1
+
+# Use the entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]

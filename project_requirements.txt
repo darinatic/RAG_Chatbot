@@ -1,33 +1,16 @@
-# Core libraries 
 numpy
 scikit-learn
 faiss-cpu
-
-# PDF parsing
 PyPDF2
-
-# Core RAG dependencies 
 sentence-transformers
 langchain
 ollama
-
-# Language detection
 langdetect
-
-# RAGAS evaluation 
 datasets
 openai
 ragas
-
-# Environment management
 python-dotenv
-
-# Experiment tracking
 mlflow
-
-# Jupyter notebook 
 jupyter
 ipykernel
-
-# UI
 streamlit
