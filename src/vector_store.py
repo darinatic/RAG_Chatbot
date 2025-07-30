@@ -19,7 +19,13 @@ class VectorStore:
         self.dimension = self.model.get_sentence_embedding_dimension()
         self.index = None
         self.chunks = []
+        
+        # Create indices directory if it doesn't exist
+        self.indices_dir = "indices"
+        os.makedirs(self.indices_dir, exist_ok=True)
+        
         print(f"Embedding model loaded. Dimension: {self.dimension}")
+        print(f"Indices will be saved to: {self.indices_dir}/")
     
     def create_embeddings(self, chunks: List[Dict[str, Any]]) -> np.ndarray:
         """Create embeddings for all chunks"""
@@ -67,27 +73,51 @@ class VectorStore:
         return results
     
     def save_index(self, filepath: str = None):
-        """Save FAISS index and chunks"""
+        """Save FAISS index and chunks to indices/ folder"""
         if filepath is None:
-            filepath = self.config.INDEX_FILE
+            filepath = os.path.join(self.indices_dir, self.config.INDEX_FILE)
+        
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
         
         if self.index:
             faiss.write_index(self.index, filepath)
-            with open(filepath.replace('.bin', '_chunks.pkl'), 'wb') as f:
+            
+            # Save chunks with same base name but _chunks.pkl extension
+            chunks_filepath = filepath.replace('.bin', '_chunks.pkl')
+            with open(chunks_filepath, 'wb') as f:
                 pickle.dump(self.chunks, f)
+            
             print(f"Index saved to {filepath}")
+            print(f"Chunks saved to {chunks_filepath}")
     
     def load_index(self, filepath: str = None):
-        """Load FAISS index and chunks"""
+        """Load FAISS index and chunks from indices/ folder"""
         if filepath is None:
-            filepath = self.config.INDEX_FILE
+            filepath = os.path.join(self.indices_dir, self.config.INDEX_FILE)
         
         try:
+            # Check if index file exists
+            if not os.path.exists(filepath):
+                print(f"Index file not found: {filepath}")
+                return False
+            
+            # Load index
             self.index = faiss.read_index(filepath)
-            with open(filepath.replace('.bin', '_chunks.pkl'), 'rb') as f:
+            
+            # Load chunks
+            chunks_filepath = filepath.replace('.bin', '_chunks.pkl')
+            if not os.path.exists(chunks_filepath):
+                print(f"Chunks file not found: {chunks_filepath}")
+                return False
+                
+            with open(chunks_filepath, 'rb') as f:
                 self.chunks = pickle.load(f)
+            
             print(f"Index loaded from {filepath}")
+            print(f"Chunks loaded from {chunks_filepath}")
             return True
+            
         except Exception as e:
             print(f"Error loading index: {str(e)}")
             return False
